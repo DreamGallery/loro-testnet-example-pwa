@@ -4,6 +4,7 @@ set -e
 
 AR_RECORD_FILE=tmp.rf.$$
 ADR_RECORD_FILE=tmp.rf.$$
+ADRR_RECORD_FILE=tmp.rf.$$
 CONFIG_FILE=`mktemp`
 
 CERC_APP_TYPE=${CERC_APP_TYPE:-"webapp"}
@@ -103,4 +104,15 @@ cat $ADR_RECORD_FILE
 ADR_RECORD_ID=$(laconic -c $CONFIG_FILE registry record publish --filename $ADR_RECORD_FILE --user-key "${CERC_REGISTRY_USER_KEY}" --bond-id ${CERC_REGISTRY_BOND_ID} | jq -r '.id')
 echo $ADR_RECORD_ID
 
-rm -f $AR_RECORD_FILE $ADR_RECORD_FILE $CONFIG_FILE
+cat <<EOF | sed '/.*: ""$/d' > "$ADRR_RECORD_FILE"
+record:
+  type: ApplicationDeploymentRemovalRequest
+  deployment: "$ADR_RECORD_ID"
+  version: 1.0.0
+EOF
+
+cat $ADRR_RECORD_FILE
+ADRR_RECORD_ID=$(laconic -c $CONFIG_FILE registry record publish --filename $ADRR_RECORD_FILE --user-key "${CERC_REGISTRY_USER_KEY}" --bond-id ${CERC_REGISTRY_BOND_ID} | jq -r '.id')
+echo $ADRR_RECORD_ID
+
+rm -f $AR_RECORD_FILE $ADR_RECORD_FILE $ADRR_RECORD_ID $CONFIG_FILE

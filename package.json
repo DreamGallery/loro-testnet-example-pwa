@@ -1,7 +1,7 @@
 {
   "private": true,
-  "name": "@DreamGallery/pwa-test-2",
-  "version": "0.0.3",
+  "name": "@DreamGallery/pwa-test",
+  "version": "0.1.20",
   "repository": "https://github.com/DreamGallery/loro-testnet-example-pwa",
   "scripts": {
     "dev": "next dev",
